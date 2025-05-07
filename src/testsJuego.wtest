@@ -1,0 +1,83 @@
+import wollok.game.*
+import jugador.*
+import objects.*
+import portal.*
+import juego.*
+
+describe "posicionamiento inicial de personaje y perseguidor" {
+	test "el perseguidor estará ubicado en la misma Y que el personaje" {
+		assert.equals(perseguidor.position().y(),personaje.position().y())
+	}
+	
+	test "la posición inicial del jugador es en x=5, y=2" {
+		assert.equals(personaje.position().x(),5)
+		assert.equals(personaje.position().y(),2)
+	}
+}
+
+describe "Estrellas"{
+	test "Agregar estrella si todavía no alcanzo el puntaje necesario para ganar"{
+	const estrellitaTest = new EstrellaMenor()
+	personaje.coleccionarEstrella(estrellitaTest)
+	assert.equals(50, personaje.puntaje())
+	}
+	//test "Cuando el personaje alcanza el puntaje gana el juego"{}
+}
+
+describe "Cambio de imagenes"{
+	
+	const portalAEspacio = new Portal()
+	const portalACiudad = new PortalEspacio()
+	
+	test "Al pasar al espacio, el jugador pasa de ser autoPersonaje a ser navePersonaje"{
+		portalAEspacio.chocarCon(personaje)
+		assert.equals("navePersonaje.png", personaje.image())
+		
+	}
+	test "Al pasar al espacio, el perseguidor pasa de ser autoPolicia a ser navePerseguidor"{
+		portalAEspacio.chocarCon(personaje)
+		assert.equals("navePerseguidor.png",perseguidor.image())
+	}
+	test "Al pasar a la ciudad, el jugador pasa de ser navePersonaje a ser autoPersonaje"{
+		portalAEspacio.chocarCon(personaje)
+		portalACiudad.chocarCon(personaje)
+		assert.equals("autoPersonaje.png", personaje.image())
+	}
+	test "Al pasar a la ciudad, el perseguidor pasa de ser navePerseguidor a ser autoPolicia"{
+		portalAEspacio.chocarCon(personaje)
+		portalACiudad.chocarCon(personaje)
+		assert.equals("autoPolicia.png", perseguidor.image())
+	}
+}
+
+/**El componente visual no se encuentra en el tablero*/
+  describe "Movimientos del personaje al chocar con los obstáculos"{
+	
+	test "El personaje se mueve una posicion al chocar con un objeto pequeño"{
+		/**var posicion = game.at(5, 2)*/ 
+		const objetoChico = new ObjetoChico()
+		game.addVisual(objetoChico)
+		objetoChico.chocarCon(personaje)
+		assert.equals(personaje.position().x(), 4)
+	}
+	
+	test "El personaje no debería moverse ni más ni menos de 1 posición"{
+		const objetoChico = new ObjetoChico()
+		game.addVisual(objetoChico)
+		objetoChico.chocarCon(personaje)
+		assert.notThat(personaje.position().x() == 3)
+	}
+	test "El personaje se mueve 2 posiciones al chocar con un objeto mediano"{
+		const objetoMediano = new ObjetoMediano()
+		game.addVisual(objetoMediano)
+		objetoMediano.chocarCon(personaje)
+		assert.equals(personaje.position().x(), 3)
+	}
+		test "El personaje no debería moverse ni más ni menos de 2 posiciones"{
+		const objetoMediano = new ObjetoMediano()
+		game.addVisual(objetoMediano)
+		objetoMediano.chocarCon(personaje)
+		assert.notThat(personaje.position().x() == 5)
+
+}}
+
